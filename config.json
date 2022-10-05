@@ -1,0 +1,39 @@
+{
+  "server": {
+    "http_port": ":8083"
+  },
+  "streams": {
+    "Camera1": {
+      "on_demand": true,
+      "domain": "1.1.1.1",
+      "rtspport": "554",
+      "httpport": "80",
+      "username": "username",
+      "password": "password"
+    },
+    "Camera2": {
+      "on_demand": true,
+      "domain": "1.1.1.1",
+      "rtspport": "554",
+      "httpport": "80",
+      "username": "username",
+      "password": "password"
+    },
+    "Camera3": {
+      "on_demand": true,
+      "domain": "1.1.1.1",
+      "rtspport": "554",
+      "httpport": "80",
+      "username": "username",
+      "password": "password"
+    },
+    "Camera4": {
+      "on_demand": true,
+      "domain": "1.1.1.1",
+      "rtspport": "554",
+      "httpport": "80",
+      "username": "username",
+      "password": "password"
+    }
+  }
+}

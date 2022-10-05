@@ -1,0 +1,24 @@
+@media (min-width: 576px) {
+    .container {
+        max-width: 90%;
+    }
+}
+
+.stream-player {
+    width: 100%;
+    min-width: 600px;
+}
+
+.player-content {
+    flex: auto;
+    max-width: 100%;
+}
+
+.camera-controls {
+    margin-left: 0px;
+}
+
+.movement-slider {
+    padding-top: 15px;
+    padding-bottom: 10px;
+}

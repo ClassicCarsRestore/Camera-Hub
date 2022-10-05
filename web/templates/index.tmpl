@@ -1,0 +1,118 @@
+<html>
+	<title>Camera Hub</title>
+    <meta http-equiv="Expires" content="0">
+    <meta http-equiv="Last-Modified" content="0">
+    <meta http-equiv="Cache-Control" content="no-cache, mustrevalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+	<link rel="icon" type="image/png" href="/static/images/icons/favicon.ico"/>
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/app.css">
+    <script type="text/javascript" src="/static/js/jquery-3.4.1.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <h2 align=center>
+        Playing Stream {{ .suuid }}
+    </h2>
+    <div class="container">
+        <div class="row">
+            <div class="col-2">
+                <div class="list-group">
+                    {{ range .suuidMap }}
+                    <a href="#" id="{{ . }}" name="{{ . }}" class="list-group-item list-group-item-action" onclick="changeCamera({{ . }})">{{ . }}</a>
+                    {{ end }}
+                </div>
+            </div>
+            <div class="col-7">
+                <input type="hidden" name="suuid" id="suuid" value="{{ .suuid }}">
+                <input type="hidden" name="port" id="port" value="{{ .port }}">
+                <video class="stream-player" id="livestream" controls autoplay muted></video>
+            </div>
+            <div class="col-3" style="margin: auto;">
+                <button id="startRecording" onclick="startRecording()" class="btn btn-success btn-lg" style="margin-bottom: 20px">
+                  <i class="fa fa-camera"></i> Start Recording
+                </button>
+                <button id="stopRecording" onclick="stopRecording()" class="btn btn-danger btn-lg" style="margin-bottom: 20px" hidden>
+                  <i class="fa fa-camera"></i> Stop Recording
+                </button>
+                <button id="snapshot" onclick="takeSnapshot()" class="btn btn-info btn-lg" style="margin-bottom: 20px">
+                  <i class="fa fa-camera"></i> Snapshot
+                </button>
+                <!-- Direction arrows -->
+                <div class="row camera-controls">
+                    <!-- Left button column -->
+                    <div class="btn-group-vertical">
+                        <button type="submit" id="left-up" class="btn btn-outline-secondary" onmousedown="cameraControl('LeftUp', 'start')" onmouseup="cameraControl('LeftUp', 'stop')" onmouseleave="cameraControl('LeftUp', 'stop')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up-left" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M2 2.5a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1H3.707l10.147 10.146a.5.5 0 0 1-.708.708L3 3.707V8.5a.5.5 0 0 1-1 0v-6z"/>
+                            </svg>
+                        </button>
+                        <button type="submit" id="left" class="btn btn-outline-secondary" onmousedown="cameraControl('Left', 'start')" onmouseup="cameraControl('Left', 'stop')" onmouseleave="cameraControl('Left', 'stop')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+                            </svg>
+                        </button>
+                        <button type="submit" id="left-down" class="btn btn-outline-secondary" onmousedown="cameraControl('LeftDown', 'start')" onmouseup="cameraControl('LeftDown', 'stop')" onmouseleave="cameraControl('LeftDown', 'stop')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down-left" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M2 13.5a.5.5 0 0 0 .5.5h6a.5.5 0 0 0 0-1H3.707L13.854 2.854a.5.5 0 0 0-.708-.708L3 12.293V7.5a.5.5 0 0 0-1 0v6z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <!-- Middle button column -->
+                    <div class="btn-group-vertical">
+                        <button type="submit" id="up" class="btn btn-outline-secondary" onmousedown="cameraControl('Up', 'start')" onmouseup="cameraControl('Up', 'stop')" onmouseleave="cameraControl('Up', 'stop')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z"/>
+                            </svg>
+                        </button>
+                        <div class="btn-group">
+                            <button type="submit" id="zoom-out" class="btn btn-primary" onmousedown="cameraControl('ZoomWide', 'start')" onmouseup="cameraControl('ZoomWide', 'stop')" onmouseleave="cameraControl('ZoomWide', 'stop')">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-dash" viewBox="0 0 16 16">
+                                    <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z"/>
+                                </svg>
+                            </button>
+                            <button type="submit" id="zoom-in" class="btn btn-primary" onmousedown="cameraControl('ZoomTele', 'start')" onmouseup="cameraControl('ZoomTele', 'stop')" onmouseleave="cameraControl('ZoomTele', 'stop')">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+                                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <button type="submit" id="down" class="btn btn-outline-secondary" onmousedown="cameraControl('Down', 'start')" onmouseup="cameraControl('Down', 'stop')" onmouseleave="cameraControl('Down', 'stop')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <!-- Right button column -->
+                    <div class="btn-group-vertical">
+                        <button type="submit" id="right-up" class="btn btn-outline-secondary" onmousedown="cameraControl('RightUp', 'start')" onmouseup="cameraControl('RightUp', 'stop')" onmouseleave="cameraControl('RightUp', 'stop')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up-right" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M14 2.5a.5.5 0 0 0-.5-.5h-6a.5.5 0 0 0 0 1h4.793L2.146 13.146a.5.5 0 0 0 .708.708L13 3.707V8.5a.5.5 0 0 0 1 0v-6z"/>
+                            </svg>
+                        </button>
+                        <button type="submit" id="right" class="btn btn-outline-secondary" onmousedown="cameraControl('Right', 'start')" onmouseup="cameraControl('Right', 'stop')" onmouseleave="cameraControl('Right', 'stop')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
+                            </svg>
+                        </button>
+                        <button type="submit" id="right-up" class="btn btn-outline-secondary" onmousedown="cameraControl('RightDown', 'start')" onmouseup="cameraControl('RightDown', 'stop')" onmouseleave="cameraControl('RightDown', 'stop')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down-right" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M14 13.5a.5.5 0 0 1-.5.5h-6a.5.5 0 0 1 0-1h4.793L2.146 2.854a.5.5 0 1 1 .708-.708L13 12.293V7.5a.5.5 0 0 1 1 0v6z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="movement-slider">
+                    <p>Camera Movement Speed: <input type="range" id="cameraSpeed" min="1" max="8" value="4"></p>
+                </div>
+                <p><input type="range" id="Brightness" min="0" max="100" value="50" onchange="changeConfig('Brightness', this.value)"> Brightness</p>
+                <p><input type="range" id="Contrast" min="0" max="100" value="50" onchange="changeConfig('Contrast', this.value)"> Contrast</p>
+                <p><input type="range" id="Gamma" min="0" max="100" value="50" onchange="changeConfig('Gamma', this.value)"> Gamma</p>
+                <p><input type="range" id="Saturation" min="0" max="100" value="50" onchange="changeConfig('Saturation', this.value)"> Saturation</p>
+                <button id="resetConfigs" onclick="resetConfigs()" class="btn btn-info btn-lg">Reset Camera Configs</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="/static/js/app.js?ver={{ .version }}"></script>
+</html>
